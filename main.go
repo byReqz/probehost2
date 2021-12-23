@@ -52,7 +52,11 @@ func ping(w http.ResponseWriter, req *http.Request) {
 	geturl := strings.Split(req.URL.String(), "/")
 	target := geturl[2]
 	pingres := runner(req.RemoteAddr, "ping", "-c5", target)
-	fmt.Fprintln(w, pingres)
+	if pingres != "" {
+		fmt.Fprintln(w, pingres)
+	} else {
+		fmt.Fprintln(w, http.StatusInternalServerError)
+	}
 }
 
 func main() {
