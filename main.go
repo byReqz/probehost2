@@ -40,6 +40,11 @@ func runner(remoteip string, command string, args... string) string{
 				"error": err.Error(),
 			}).Warn("the following request failed:")
 		}
+	} else {
+		logfile.WithFields(log.Fields{
+			"remote_ip": remoteip,
+			"command": fmt.Sprint(command, args),
+		}).Info("the following request was issued without error")
 	}
 	return string(cmd)
 }
@@ -52,10 +57,10 @@ func ping(w http.ResponseWriter, req *http.Request) {
 	geturl := strings.Split(req.URL.String(), "/")
 	target := geturl[2]
 	pingres := runner(req.RemoteAddr, "ping", "-c5", target)
-	if pingres != "" {
-		fmt.Fprintln(w, pingres)
-	} else {
+	if pingres == "" {
 		fmt.Fprintln(w, http.StatusInternalServerError)
+	} else {
+		fmt.Fprintln(w, pingres)
 	}
 }
 
