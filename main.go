@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"strings"
 	"net/http"
+	"net"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -59,25 +60,45 @@ func showhelp(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(w, "placeholder")
 }
 
+func validatehosts(hosts []string) []string{
+	var valid []string
+	for _, host := range hosts {
+		if net.ParseIP(host) != nil {
+			valid = append(valid, host)
+		} else if _, err := net.LookupIP(host); err == nil {
+			valid = append(valid, host)
+		}
+	}
+	return valid
+}
+
 func ping(w http.ResponseWriter, req *http.Request) {
 	geturl := strings.Split(req.URL.String(), "/")
-	target := geturl[2]
-	res := runner(req.RemoteAddr, "ping", "-c10", target)
+	targets := strings.Split(geturl[2], ",")
+	hosts := validatehosts(targets)
+	var res string
+	for _, host := range hosts {
+		res = fmt.Sprint(res, runner(req.RemoteAddr, "ping", "-c10", host), "\n")
+	}
 	if res == "" {
 		fmt.Fprintln(w, http.StatusInternalServerError)
 	} else {
-		fmt.Fprint(w, res)
+		fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
 }
 
 func mtr(w http.ResponseWriter, req *http.Request) {
 	geturl := strings.Split(req.URL.String(), "/")
-	target := geturl[2]
-	res := runner(req.RemoteAddr, "mtr", "-c10", "-w", target)
+	targets := strings.Split(geturl[2], ",")
+	hosts := validatehosts(targets)
+	var res string
+	for _, host := range hosts {
+		res = fmt.Sprint(res, runner(req.RemoteAddr, "mtr", "-c10", "-w", host), "\n")
+	}
 	if res == "" {
 		fmt.Fprintln(w, http.StatusInternalServerError)
 	} else {
-		fmt.Fprint(w, res)
+		fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
 }
 
