@@ -6,6 +6,7 @@ import (
   "strings"
   "net/http"
   "net"
+  "flag"
 
   log "github.com/sirupsen/logrus"
 )
@@ -13,13 +14,20 @@ import (
 var logstdout = log.New()
 var logfile = log.New()
 
+var logfilepath string
+var listenport int
+
 func init() {
+  flag.StringVar(&logfilepath, "logfilepath", "probehost2.log", "sets the output file for the log")
+  flag.IntVar(&listenport, "port", 8000, "sets the port to listen on")
+  flag.Parse()
+
   logstdout.SetFormatter(&log.TextFormatter{
     FullTimestamp: true})
   logstdout.SetOutput(os.Stdout)
   logstdout.SetLevel(log.InfoLevel)
 
-  logpath, err := os.OpenFile("probehost2.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0660)
+  logpath, err := os.OpenFile(logfilepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0660)
   if err != nil {
     logstdout.Fatal("Failed to initialize the logfile: ", err.Error())
   }
@@ -106,7 +114,7 @@ func main() {
   http.HandleFunc("/ping/", ping)
   http.HandleFunc("/mtr/", mtr)
   http.HandleFunc("/", showhelp)
-  logstdout.Info("Serving on :8000")
-  logfile.Info("Serving on :8000")
-  http.ListenAndServe(":8000", nil)
+  logstdout.Info("Serving on :", listenport)
+  logfile.Info("Serving on :", listenport)
+  http.ListenAndServe(fmt.Sprint(":", listenport), nil)
 }
