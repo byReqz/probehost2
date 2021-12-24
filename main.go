@@ -28,6 +28,10 @@ func init() {
 }
 
 func runner(remoteip string, command string, args... string) string{
+	logfile.WithFields(log.Fields{
+		"remote_ip": remoteip,
+		"command": fmt.Sprint(command, args),
+	}).Info("request initiated:")
 	cmd, err := exec.Command(command, args...).Output()
 	if err != nil {
 		if ! strings.Contains(err.Error(), "1") {	// dont exit if error code is 1
@@ -35,7 +39,7 @@ func runner(remoteip string, command string, args... string) string{
 				"remote_ip": remoteip,
 				"command": fmt.Sprint(command, args),
 				"error": err.Error(),
-			}).Warn("the following request failed:")
+			}).Warn("request failed:")
 			logfile.WithFields(log.Fields{
 				"remote_ip": remoteip,
 				"command": fmt.Sprint(command, args),
@@ -58,16 +62,28 @@ func showhelp(w http.ResponseWriter, req *http.Request) {
 func ping(w http.ResponseWriter, req *http.Request) {
 	geturl := strings.Split(req.URL.String(), "/")
 	target := geturl[2]
-	pingres := runner(req.RemoteAddr, "ping", "-c5", target)
-	if pingres == "" {
+	res := runner(req.RemoteAddr, "ping", "-c10", target)
+	if res == "" {
 		fmt.Fprintln(w, http.StatusInternalServerError)
 	} else {
-		fmt.Fprintln(w, pingres)
+		fmt.Fprint(w, res)
+	}
+}
+
+func mtr(w http.ResponseWriter, req *http.Request) {
+	geturl := strings.Split(req.URL.String(), "/")
+	target := geturl[2]
+	res := runner(req.RemoteAddr, "mtr", "-c10", "-w", target)
+	if res == "" {
+		fmt.Fprintln(w, http.StatusInternalServerError)
+	} else {
+		fmt.Fprint(w, res)
 	}
 }
 
 func main() {
 	http.HandleFunc("/ping/", ping)
+	http.HandleFunc("/mtr/", mtr)
 	http.HandleFunc("/", showhelp)
 	fmt.Println("Serving on :8000")
 	http.ListenAndServe(":8000", nil)
