@@ -1,6 +1,12 @@
-FROM alpine:latest
+FROM golang:latest as builder
+WORKDIR /build
+COPY . .
+RUN go get -u
+RUN CGO_ENABLED=0 go build -o probehost2
 
+FROM alpine:latest
 RUN apk update
-RUN apk add curl jq 
-RUN curl -s https://api.github.com/repos/byReqz/probehost2/releases/latest | jq -r '.assets[].browser_download_url' | grep "probehost2" | xargs curl -L -o probehost2 
-ENTRYPOINT ["/probehost2"]
+RUN apk add mtr
+COPY --from=builder /build/probehost2 /
+RUN touch /probehost2.log
+CMD ["/probehost2"]
