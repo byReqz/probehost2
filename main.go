@@ -14,10 +14,10 @@ import (
 var logstdout = log.New()
 var logfile = log.New()
 
-var logfilepath string
 var listenport int
 
 func init() {
+  var logfilepath string
   flag.StringVar(&logfilepath, "logfilepath", "probehost2.log", "sets the output file for the log")
   flag.IntVar(&listenport, "port", 8000, "sets the port to listen on")
   flag.Parse()
@@ -62,10 +62,6 @@ func runner(remoteip string, command string, args... string) string{
     }).Info("request succeeded:")
   }
   return string(cmd)
-}
-
-func showhelp(w http.ResponseWriter, req *http.Request) {
-  fmt.Fprintln(w, "placeholder")
 }
 
 func validatehosts(hosts []string) []string{
@@ -113,7 +109,6 @@ func mtr(w http.ResponseWriter, req *http.Request) {
 func main() {
   http.HandleFunc("/ping/", ping)
   http.HandleFunc("/mtr/", mtr)
-  http.HandleFunc("/", showhelp)
   logstdout.Info("Serving on :", listenport)
   logfile.Info("Serving on :", listenport)
   http.ListenAndServe(fmt.Sprint(":", listenport), nil)
