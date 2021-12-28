@@ -106,9 +106,25 @@ func mtr(w http.ResponseWriter, req *http.Request) {
   }
 }
 
+func traceroute(w http.ResponseWriter, req *http.Request) {
+  geturl := strings.Split(req.URL.String(), "/")
+  targets := strings.Split(geturl[2], ",")
+  hosts := validatehosts(targets)
+  var res string
+  for _, host := range hosts {
+    res = fmt.Sprint(res, runner(req.RemoteAddr, "traceroute", host), "\n")
+  }
+  if res == "" {
+    fmt.Fprintln(w, http.StatusInternalServerError)
+  } else {
+    fmt.Fprint(w, strings.TrimSpace(res), "\n")
+  }
+}
+
 func main() {
   http.HandleFunc("/ping/", ping)
   http.HandleFunc("/mtr/", mtr)
+  http.HandleFunc("/tracert/", traceroute)
   logstdout.Info("Serving on :", listenport)
   logfile.Info("Serving on :", listenport)
   http.ListenAndServe(fmt.Sprint(":", listenport), nil)
