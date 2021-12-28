@@ -1,0 +1,16 @@
+# systemd service file for probehost2
+
+[Unit]
+Description=probehost2 daemon
+Wants=network.target
+After=network-online.target
+StartLimitBurst=5
+StartLimitIntervalSec=20
+
+[Service]
+Restart=always
+RestartSec=1
+ExecStart=/bin/probehost2 --logfilepath "/var/log/probehost2.log" --port 8000
+
+[Install]
+WantedBy=multi-user.target
