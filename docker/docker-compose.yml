@@ -1,0 +1,11 @@
+version: '2.3'
+
+services:
+  probehost2:
+    container_name: probehost2
+    image: byreqz/probehost2:latest
+    restart: unless-stopped
+    ports:
+     - 1234:8000
+    volumes:
+     - ./probehost2.log:/probehost2.log
