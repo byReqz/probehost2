@@ -1,4 +1,4 @@
-module main
+module github.com/byReqz/probehost2
 
 go 1.17
 
