@@ -89,7 +89,7 @@ func ping(w http.ResponseWriter, req *http.Request) {
   cmdopts := map[string]string{"4": "-4", "6": "-6", "d": "-D", "n": "-n", "v": "-v", "c1": "-c1", "c5": "-c5", "c10": "-c10"}
   var opts []string
   opts = append(opts, "-c10") // add default options
-  if len(geturl) > 3 { 
+  if len(geturl) > 3 && len(geturl[3]) > 0 { 
     options := strings.Split(geturl[3], ",")
     opts = append(opts, parseopts(options, cmdopts)...)
   }
@@ -114,7 +114,7 @@ func mtr(w http.ResponseWriter, req *http.Request) {
   cmdopts := map[string]string{"4": "-4", "6": "-6", "u": "-u", "t": "-T", "e": "-e", "x": "-x", "n": "-n", "b": "-b", "z": "-z", "c1": "-c1", "c5": "-c5", "c10": "-c10"}
   var opts []string
   opts = append(opts, "-r", "-w", "-c10") // add default options
-  if len(geturl) > 3 { 
+  if len(geturl) > 3 && len(geturl[3]) > 0 { 
     options := strings.Split(geturl[3], ",")
     opts = append(opts, parseopts(options, cmdopts)...)
   }
@@ -139,7 +139,7 @@ func traceroute(w http.ResponseWriter, req *http.Request) {
   cmdopts := map[string]string{"4": "-4", "6": "-6", "dnf": "-F", "i": "-I", "t": "-T", "n": "-n", "u": "-U", "ul": "-UL", "d": "-D", "b": "--back"}
   var opts []string
   //opts = append(opts, "-c10") // no default options for traceroute
-  if len(geturl) > 3 { 
+  if len(geturl) > 3 && len(geturl[3]) > 0 { 
     options := strings.Split(geturl[3], ",")
     opts = append(opts, parseopts(options, cmdopts)...)
   }
