@@ -43,18 +43,16 @@ func runner(remoteip string, command string, args... string) string{
   }).Info("request initiated:")
   cmd, err := exec.Command(command, args...).Output()
   if err != nil {
-    if ! strings.Contains(err.Error(), "1") {	// dont exit if error code is 1
-      logstdout.WithFields(log.Fields{
-        "remote_ip": remoteip,
-        "command": fmt.Sprint(command, args),
-        "error": err.Error(),
-      }).Warn("request failed:")
-      logfile.WithFields(log.Fields{
-        "remote_ip": remoteip,
-        "command": fmt.Sprint(command, args),
-        "error": err.Error(),
-      }).Warn("request failed:")
-    }
+    logstdout.WithFields(log.Fields{
+      "remote_ip": remoteip,
+      "command": fmt.Sprint(command, args),
+      "error": err.Error(),
+    }).Warn("request failed:")
+    logfile.WithFields(log.Fields{
+      "remote_ip": remoteip,
+      "command": fmt.Sprint(command, args),
+      "error": err.Error(),
+    }).Warn("request failed:")
   } else {
     logfile.WithFields(log.Fields{
       "remote_ip": remoteip,
@@ -76,15 +74,33 @@ func validatehosts(hosts []string) []string{
   return valid
 }
 
+func parseopts(options []string, cmdopts map[string]string) []string{
+  var opts []string
+  for _, opt := range options {
+    opts = append(opts, cmdopts[opt])
+  }
+  return opts
+}
+
 func ping(w http.ResponseWriter, req *http.Request) {
   geturl := strings.Split(req.URL.String(), "/")
   targets := strings.Split(geturl[2], ",")
   hosts := validatehosts(targets)
-  var res string
-  for _, host := range hosts {
-    res = fmt.Sprint(res, runner(req.RemoteAddr, "ping", "-c10", host), "\n")
+  cmdopts := map[string]string{"4": "-4", "6": "-6", "d": "-D", "n": "-n", "v": "-v", "c1": "-c1", "c5": "-c5", "c10": "-c10"}
+  var opts []string
+  opts = append(opts, "-c10") // add default options
+  if len(geturl) > 3 { 
+    options := strings.Split(geturl[3], ",")
+    opts = append(opts, parseopts(options, cmdopts)...)
   }
-  if res == "" {
+  var res string
+  var args []string
+  for _, host := range hosts {
+    args = append(args, opts...)
+    args = append(args, host)
+    res = fmt.Sprint(res, runner(req.RemoteAddr, "ping", args...), "\n")
+  }
+  if strings.TrimSpace(res) == "" {
     fmt.Fprintln(w, http.StatusInternalServerError)
   } else {
     fmt.Fprint(w, strings.TrimSpace(res), "\n")
@@ -95,11 +111,21 @@ func mtr(w http.ResponseWriter, req *http.Request) {
   geturl := strings.Split(req.URL.String(), "/")
   targets := strings.Split(geturl[2], ",")
   hosts := validatehosts(targets)
-  var res string
-  for _, host := range hosts {
-    res = fmt.Sprint(res, runner(req.RemoteAddr, "mtr", "-c10", "-w", host), "\n")
+  cmdopts := map[string]string{"4": "-4", "6": "-6", "u": "-u", "t": "-T", "e": "-e", "x": "-x", "n": "-n", "b": "-b", "z": "-z", "c1": "-c1", "c5": "-c5", "c10": "-c10"}
+  var opts []string
+  opts = append(opts, "-r", "-w", "-c10") // add default options
+  if len(geturl) > 3 { 
+    options := strings.Split(geturl[3], ",")
+    opts = append(opts, parseopts(options, cmdopts)...)
   }
-  if res == "" {
+  var res string
+  var args []string
+  for _, host := range hosts {
+    args = append(args, opts...)
+    args = append(args, host)
+    res = fmt.Sprint(res, runner(req.RemoteAddr, "mtr", args...), "\n")
+  }
+  if strings.TrimSpace(res) == "" {
     fmt.Fprintln(w, http.StatusInternalServerError)
   } else {
     fmt.Fprint(w, strings.TrimSpace(res), "\n")
@@ -110,11 +136,21 @@ func traceroute(w http.ResponseWriter, req *http.Request) {
   geturl := strings.Split(req.URL.String(), "/")
   targets := strings.Split(geturl[2], ",")
   hosts := validatehosts(targets)
-  var res string
-  for _, host := range hosts {
-    res = fmt.Sprint(res, runner(req.RemoteAddr, "traceroute", host), "\n")
+  cmdopts := map[string]string{"4": "-4", "6": "-6", "dnf": "-F", "i": "-I", "t": "-T", "n": "-n", "u": "-U", "ul": "-UL", "d": "-D", "b": "--back"}
+  var opts []string
+  //opts = append(opts, "-c10") // no default options for traceroute
+  if len(geturl) > 3 { 
+    options := strings.Split(geturl[3], ",")
+    opts = append(opts, parseopts(options, cmdopts)...)
   }
-  if res == "" {
+  var res string
+  var args []string
+  for _, host := range hosts {
+    args = append(args, opts...)
+    args = append(args, host)
+    res = fmt.Sprint(res, runner(req.RemoteAddr, "traceroute", args...), "\n")
+  }
+  if strings.TrimSpace(res) == "" {
     fmt.Fprintln(w, http.StatusInternalServerError)
   } else {
     fmt.Fprint(w, strings.TrimSpace(res), "\n")
