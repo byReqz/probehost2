@@ -15,11 +15,13 @@ var logstdout = log.New()
 var logfile = log.New()
 
 var listenport int
+var usexforwardedfor bool
 
 func init() {
   var logfilepath string
   flag.StringVar(&logfilepath, "logfilepath", "probehost2.log", "sets the output file for the log")
   flag.IntVar(&listenport, "port", 8000, "sets the port to listen on")
+  flag.BoolVar(&usexforwardedfor, "use-x-forwarded-for", true, "specifies whether to show x-forwarded-for or the requesting IP")
   flag.Parse()
 
   logstdout.SetFormatter(&log.TextFormatter{
@@ -94,10 +96,16 @@ func prerunner(req *http.Request, cmd string, cmdopts map[string]string, default
   }
   var res string
   var args []string
+  var remoteaddr string
+  if req.Header.Get("X-Forwarded-For") != "" && usexforwardedfor != false {
+    remoteaddr = req.Header.Get("X-Forwarded-For")
+  } else {
+    remoteaddr = req.RemoteAddr
+  }
   for _, host := range hosts {
     args = append(args, opts...)
     args = append(args, host)
-    res = fmt.Sprint(res, runner(req.RemoteAddr, cmd, args...), "\n")
+    res = fmt.Sprint(res, runner(remoteaddr, cmd, args...), "\n")
   }
   return res
 }
