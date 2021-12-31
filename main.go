@@ -145,6 +145,7 @@ func main() {
   http.HandleFunc("/ping/", ping)
   http.HandleFunc("/mtr/", mtr)
   http.HandleFunc("/tracert/", traceroute)
+  http.HandleFunc("/traceroute/", traceroute)
   logstdout.Info("Serving on :", listenport)
   logfile.Info("Serving on :", listenport)
   http.ListenAndServe(fmt.Sprint(":", listenport), nil)
