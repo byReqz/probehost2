@@ -6,9 +6,10 @@ import (
   "strings"
   "net/http"
   "net"
-  "flag"
 
   log "github.com/sirupsen/logrus"
+  flag "github.com/spf13/pflag"
+
 )
 
 var logstdout = log.New()
@@ -19,9 +20,9 @@ var usexforwardedfor bool
 
 func init() {
   var logfilepath string
-  flag.StringVar(&logfilepath, "logfilepath", "probehost2.log", "sets the output file for the log")
-  flag.IntVar(&listenport, "port", 8000, "sets the port to listen on")
-  flag.BoolVar(&usexforwardedfor, "use-x-forwarded-for", true, "specifies whether to show x-forwarded-for or the requesting IP")
+  flag.StringVarP(&logfilepath, "logfilepath", "o","probehost2.log", "sets the output file for the log")
+  flag.IntVarP(&listenport, "port", "p", 8000, "sets the port to listen on")
+  flag.BoolVarP(&usexforwardedfor, "use-x-forwarded-for", "x", true, "specifies whether to show x-forwarded-for or the requesting IP")
   flag.Parse()
 
   logstdout.SetFormatter(&log.TextFormatter{
