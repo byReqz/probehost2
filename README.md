@@ -60,6 +60,8 @@ The app currently has 4 runtime flags:
 
 The app will log every request including the IP thats querying and show failed requests on stdout.
 
+Requests that contain an X-Forwarded-For header (implying the app is behind a reverse proxy) will automatically log that address instead of the requesting IP (the proxy itself), this can be turned off with -x.
+
 ## Client
 ### General
 The app can be queried via HTTP/HTTPS with the following scheme:
