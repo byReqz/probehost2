@@ -17,12 +17,14 @@ var logfile = log.New()
 
 var listenport int
 var disablexforwardedfor bool
+var allowprivate bool
 
 func init() {
   var logfilepath string
   flag.StringVarP(&logfilepath, "logfilepath", "o","probehost2.log", "sets the output file for the log")
   flag.IntVarP(&listenport, "port", "p", 8000, "sets the port to listen on")
-  flag.BoolVarP(&disablexforwardedfor, "disable-x-forwarded-for", "x", false, "specifies whether to show x-forwarded-for or the requesting IP")
+  flag.BoolVarP(&disablexforwardedfor, "disable-x-forwarded-for", "x", false, "whether to show x-forwarded-for or the requesting IP")
+  flag.BoolVarP(&allowprivate, "allow-private", "l", false, "whether to show lookups of private IP ranges")
   flag.Parse()
 
   logstdout.SetFormatter(&log.TextFormatter{
@@ -68,8 +70,12 @@ func runner(remoteip string, command string, args... string) string{
 func validatehosts(hosts []string) []string{
   var valid []string
   for _, host := range hosts {
-    if net.ParseIP(host) != nil {
-      valid = append(valid, host)
+    if hostparse := net.ParseIP(host); hostparse != nil {
+      if (net.IP.IsPrivate(hostparse) || net.IP.IsLoopback(hostparse)) && allowprivate {
+        valid = append(valid, host)
+      } else if ! (net.IP.IsPrivate(hostparse) || net.IP.IsLoopback(hostparse)) {
+        valid = append(valid, host)
+      }
     } else if _, err := net.LookupIP(host); err == nil {
       valid = append(valid, host)
     }
