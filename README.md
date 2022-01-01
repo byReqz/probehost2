@@ -1,10 +1,20 @@
 # probehost2
 an http endpoint to query network diagnosis tools from remote hosts
 
-1. Overview
-2. Disclaimer
-3. Installation
-4. Usage
+- <a href="#probehost2">Overview</a>
+- <a href="#disclaimer">Disclaimer</a>
+- <a href="#installation">Installation</a>
+    - <a href="#building">Building</a>
+    - <a href="#systemd">Systemd</a>
+    - <a href="#docker">Docker</a>
+    - <a href="#proxy">Proxy</a>
+- <a href="#usage">Usage</a>
+    - <a href="#server">Server</a>
+    - <a href="#client">Client</a>
+        - <a href="#general">General</a>
+        - <a href="#ping">Ping</a>
+        - <a href="#mtr">MTR</a>
+        - <a href="#traceroute">Traceroute</a>
 
 # Disclaimer
 Dont expect good or even mediocre code here. This is my first take at go and is mostly for myself to learn. Suggestions and improvements are welcome.
@@ -69,21 +79,21 @@ All inputs are validated and invalid input is discarded. If the request contains
 
 Local IP ranges are by default excluded from lookups, this currently only includes IPs and not hostnames and can be disabled on the server by passing the -l flag.
 
-Command options are based on the originally given cli flags but also have a more understandable altname (wip).
+Command options are based on the originally given cli flags but also have a more understandable altname.
 
 ### Ping
 The default options are:
 - `-c 10`: send 10 pings
 
 Available options are:
-- `4`: force IPv4
-- `6`: force IPv6
-- `d`: print timestamps
-- `n`: no dns name resolution
-- `v`: verbose output
-- `c1`: send 1 ping
-- `c5`: send 5 pings
-- `c10`: send 10 pings
+- `4` / `force4`: force IPv4
+- `6` / `force6`: force IPv6
+- `d` / `timestamps`: print timestamps
+- `n` / `nodns`: no dns name resolution
+- `v` / `verbose`: verbose output
+- `c1` / `count1`: send 1 ping
+- `c5` / `count5`: send 5 pings
+- `c10` / `count10`: send 10 pings
 
 Example query:
 ```sh
@@ -103,18 +113,18 @@ The default options are:
 - `-c10`: send 10 pings
 
 Available options are:
-- `4`: force IPv4
-- `6`: force IPv6
-- `u`: use UDP instead of ICMP echo
-- `t`: use TCP instead of ICMP echo
-- `e`: display information from ICMP extensions
-- `x`: output xml
-- `n`: do not resolve host names
-- `b`: show IP numbers and host names
-- `z`: display AS number
-- `c1`: send 1 ping
-- `c5`: send 5 pings
-- `c10`: send 10 pings
+- `4` / `force4`: force IPv4
+- `6` / `force6`: force IPv6
+- `u` / `udp`: use UDP instead of ICMP echo
+- `t` / `tcp`: use TCP instead of ICMP echo
+- `e` / `ext`: display information from ICMP extensions
+- `x` / `xml`: output xml
+- `n` / `nodns`: do not resolve host names
+- `b` / `cmb`: show IP numbers and host names
+- `z` / `asn`: display AS number
+- `c1` / `count1`: send 1 ping
+- `c5` / `count5`: send 5 pings
+- `c10` / `count10`: send 10 pings
 
 Example query:
 ```
@@ -129,16 +139,16 @@ The default options are:
 - none
 
 Available options are:
-- `4`: force IPv4
-- `6`: force IPv6
-- `f`: do not fragment packets
-- `i`: use ICMP ECHO for tracerouting
-- `t`: use TCP SYN for tracerouting (default port is 80)
-- `n`: do not resolve IP addresses to their domain names
-- `u`: use UDP to particular port for tracerouting (default port is 53)
-- `ul`: Use UDPLITE for tracerouting (default port is 53)
-- `d`: Use DCCP Request for tracerouting (default port is 33434)
-- `b`: Guess the number of hops in the backward path and print if it differs
+- `4` / `force4`: force IPv4
+- `6` / `force6`: force IPv6
+- `f` / `dnf`: do not fragment packets
+- `i` / `ìcmp`: use ICMP ECHO for tracerouting
+- `t` / `tcp`: use TCP SYN for tracerouting (default port is 80)
+- `n` / `nodns`: do not resolve IP addresses to their domain names
+- `u` / `udp`: use UDP to particular port for tracerouting (default port is 53)
+- `ul` / `udplite`: Use UDPLITE for tracerouting (default port is 53)
+- `d` / `dccp`: Use DCCP Request for tracerouting (default port is 33434)
+- `b` / `back`: Guess the number of hops in the backward path and print if it differs
 
 Example query:
 ```

@@ -119,7 +119,10 @@ func prerunner(req *http.Request, cmd string, cmdopts map[string]string, default
 
 func ping(w http.ResponseWriter, req *http.Request) {
   cmd := "ping"
-  cmdopts := map[string]string{"4": "-4", "6": "-6", "d": "-D", "n": "-n", "v": "-v", "c1": "-c1", "c5": "-c5", "c10": "-c10"}
+  cmdopts := map[string]string{
+    "4": "-4", "6": "-6", "d": "-D", "n": "-n", "v": "-v", "c1": "-c1", "c5": "-c5", "c10": "-c10",
+    "force4": "-4", "force6": "-6", "timestamps": "-D", "nodns": "-n", "verbose": "-v", "count1": "-c1", "count5": "-c5", "count10": "-c10",
+  }
   var defaultopts []string
   defaultopts = append(defaultopts, "-c10")
   res := prerunner(req, cmd, cmdopts, defaultopts)
@@ -132,7 +135,10 @@ func ping(w http.ResponseWriter, req *http.Request) {
 
 func mtr(w http.ResponseWriter, req *http.Request) {
   cmd := "mtr"
-  cmdopts := map[string]string{"4": "-4", "6": "-6", "u": "-u", "t": "-T", "e": "-e", "x": "-x", "n": "-n", "b": "-b", "z": "-z", "c1": "-c1", "c5": "-c5", "c10": "-c10"}
+  cmdopts := map[string]string{
+    "4": "-4", "6": "-6", "u": "-u", "t": "-T", "e": "-e", "x": "-x", "n": "-n", "b": "-b", "z": "-z", "c1": "-c1", "c5": "-c5", "c10": "-c10",
+    "force4": "-4", "force6": "-6", "udp": "-u", "tcp": "-T", "ext": "-e", "xml": "-x", "nodns": "-n", "cmb": "-b", "asn": "-z", "count1": "-c1", "count5": "-c5", "count10": "-c10",
+  }
   var defaultopts []string
   defaultopts = append(defaultopts, "-r", "-w", "-c10")
   res := prerunner(req, cmd, cmdopts, defaultopts)
@@ -145,7 +151,10 @@ func mtr(w http.ResponseWriter, req *http.Request) {
 
 func traceroute(w http.ResponseWriter, req *http.Request) {
   cmd := "traceroute"
-  cmdopts := map[string]string{"4": "-4", "6": "-6", "dnf": "-F", "i": "-I", "t": "-T", "n": "-n", "u": "-U", "ul": "-UL", "d": "-D", "b": "--back"}
+  cmdopts := map[string]string{
+    "4": "-4", "6": "-6", "f": "-F", "i": "-I", "t": "-T", "n": "-n", "u": "-U", "ul": "-UL", "d": "-D", "b": "--back",
+    "force4": "-4", "force6": "-6", "dnf": "-F", "icmp": "-I", "tcp": "-T", "nodns": "-n", "udp": "-U", "udplite": "-UL", "dccp": "-D", "back": "--back",
+  }
   var defaultopts []string
   //defaultopts = append(defaultopts) // no default options for traceroute
   res := prerunner(req, cmd, cmdopts, defaultopts)
