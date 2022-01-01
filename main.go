@@ -16,13 +16,13 @@ var logstdout = log.New()
 var logfile = log.New()
 
 var listenport int
-var usexforwardedfor bool
+var disablexforwardedfor bool
 
 func init() {
   var logfilepath string
   flag.StringVarP(&logfilepath, "logfilepath", "o","probehost2.log", "sets the output file for the log")
   flag.IntVarP(&listenport, "port", "p", 8000, "sets the port to listen on")
-  flag.BoolVarP(&usexforwardedfor, "use-x-forwarded-for", "x", true, "specifies whether to show x-forwarded-for or the requesting IP")
+  flag.BoolVarP(&disablexforwardedfor, "disable-x-forwarded-for", "x", false, "specifies whether to show x-forwarded-for or the requesting IP")
   flag.Parse()
 
   logstdout.SetFormatter(&log.TextFormatter{
@@ -98,7 +98,7 @@ func prerunner(req *http.Request, cmd string, cmdopts map[string]string, default
   var res string
   var args []string
   var remoteaddr string
-  if req.Header.Get("X-Forwarded-For") != "" && usexforwardedfor != false {
+  if req.Header.Get("X-Forwarded-For") != "" && disablexforwardedfor != true {
     remoteaddr = req.Header.Get("X-Forwarded-For")
   } else {
     remoteaddr = req.RemoteAddr
