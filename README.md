@@ -58,6 +58,8 @@ The app currently has 4 runtime flags:
 - `-x / --disable-x-forwarded-for` -- disables checking for the X-Forwarded-For header
 - `-l / --allow-private` -- allows lookups of private IP ranges
 
+All of the Flags also have an accompanying environment value: `PROBEHOST_LOGPATH`, `PROBEHOST_ALLOW_PRIVATE`, `PROBEHOST_LISTEN_PORT` and `PROBEHOST_DISABLE_X_FORWARDED_FOR` but the options given via commandline have priority.
+
 The app will log every request including the IP thats querying and show failed requests on stdout.
 
 Requests that contain an X-Forwarded-For header (implying the app is behind a reverse proxy) will automatically log that address instead of the requesting IP (the proxy itself), this can be turned off with -x.

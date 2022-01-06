@@ -5,6 +5,11 @@ services:
     container_name: probehost2
     image: byreqz/probehost2:latest
     restart: unless-stopped
+    environment:
+     - PROBEHOST_LOGPATH=/probehost2.log
+     - PROBEHOST_ALLOW_PRIVATE=false
+     - PROBEHOST_DISABLE_X_FORWARDED_FOR=false
+     - PROBEHOST_LISTEN_PORT=8000
     ports:
      - 1234:8000
     volumes:

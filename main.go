@@ -6,6 +6,7 @@ import (
   "strings"
   "net/http"
   "net"
+  "strconv"
 
   log "github.com/sirupsen/logrus"
   flag "github.com/spf13/pflag"
@@ -20,17 +21,41 @@ var disablexforwardedfor bool
 var allowprivate bool
 
 func init() {
-  var logfilepath string
-  flag.StringVarP(&logfilepath, "logfilepath", "o","probehost2.log", "sets the output file for the log")
-  flag.IntVarP(&listenport, "port", "p", 8000, "sets the port to listen on")
-  flag.BoolVarP(&disablexforwardedfor, "disable-x-forwarded-for", "x", false, "whether to show x-forwarded-for or the requesting IP")
-  flag.BoolVarP(&allowprivate, "allow-private", "l", false, "whether to show lookups of private IP ranges")
-  flag.Parse()
-
   logstdout.SetFormatter(&log.TextFormatter{
     FullTimestamp: true})
   logstdout.SetOutput(os.Stdout)
   logstdout.SetLevel(log.InfoLevel)
+  var logfilepath string
+
+  if _, exists := os.LookupEnv("PROBEHOST_LOGPATH"); exists == true {
+    logfilepath, _ = os.LookupEnv("PROBEHOST_LOGPATH")
+  } else {
+    logfilepath = "probehost2.log"
+  }
+  if exists, _ := os.LookupEnv("PROBEHOST_ALLOW_PRIVATE"); exists == "true" {
+    allowprivate = true
+  } else {
+    allowprivate = false
+  }
+  if envvalue, exists := os.LookupEnv("PROBEHOST_LISTEN_PORT"); exists == true {
+    var err error
+    listenport, err = strconv.Atoi(envvalue)
+    if err != nil {
+      logstdout.Fatal("Failed to read PROBEHOST_LISTEN_PORT: ", err.Error())
+    }
+  } else {
+    listenport = 8000
+  }
+  if exists, _ := os.LookupEnv("PROBEHOST_DISABLE_X_FORWARDED_FOR"); exists == "true" {
+    disablexforwardedfor = true
+  } else {
+    disablexforwardedfor = false
+  }
+  flag.StringVarP(&logfilepath, "logfilepath", "o", logfilepath, "sets the output file for the log")
+  flag.IntVarP(&listenport, "port", "p", listenport, "sets the port to listen on")
+  flag.BoolVarP(&disablexforwardedfor, "disable-x-forwarded-for", "x", disablexforwardedfor, "whether to show x-forwarded-for or the requesting IP")
+  flag.BoolVarP(&allowprivate, "allow-private", "l", allowprivate, "whether to show lookups of private IP ranges")
+  flag.Parse()
 
   logpath, err := os.OpenFile(logfilepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0660)
   if err != nil {
