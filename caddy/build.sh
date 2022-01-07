@@ -1,0 +1,1 @@
+xcaddy build --with github.com/mholt/caddy-ratelimit

@@ -1,0 +1,29 @@
+{
+        email [your email]
+        order rate_limit before basicauth
+}
+
+:80, :443 {
+        redir * https://[your domain]
+}
+
+[your domain] {
+        reverse_proxy [host]:[port]
+        log {
+                output file [path] {
+                        roll_size 10GiB
+                        roll_keep 10
+                }
+                level INFO
+        }
+        handle_errors {
+                respond "{http.error.status_code} {http.error.status_text}"
+        }
+        rate_limit {
+                zone dynamic {
+                        key {remote_host}
+                        events 2
+                        window 5s
+                }
+        }
+}
