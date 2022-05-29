@@ -3,7 +3,7 @@ version: '2.3'
 services:
   probehost2:
     container_name: probehost2
-    image: reg.nils.lol/byreqz/probehost2:latest
+    image: byreqz/probehost2:latest
     restart: unless-stopped
     environment:
      - PROBEHOST_LOGPATH=/probehost2.log

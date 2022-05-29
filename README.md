@@ -44,7 +44,7 @@ Example files for a systemd service can be found in the `systemd` subfolder.
 ## Docker
 A docker container based on <a href="https://alpinelinux.org">Alpine</a> can be built by using the included dockerfile (`docker/Dockerfile`).
 ```sh
-docker build -f docker/Dockerfile . -t https://reg.nils.lol/byreqz/probehost2:latest
+docker build -f docker/Dockerfile . -t byreqz/probehost2:latest
 ```
 A compose file can also be found in `docker/docker-compose.yml`.
 
