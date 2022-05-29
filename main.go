@@ -151,13 +151,13 @@ func prerunner(req *http.Request, cmd string, cmdopts map[string]string, default
 		remoteaddr = req.RemoteAddr
 	}
 	for i, host := range hosts {
+		runargs := append(args, opts...)
 		if ports[i] != "0" && cmd == "nping" {
-			args = append(args, "-p"+ports[i])
+			runargs = append(runargs, "-p"+ports[i])
 		}
-		args = append(args, opts...)
-		args = append(args, host)
-		fmt.Println(remoteaddr, cmd, args)
-		res = fmt.Sprint(res, runner(remoteaddr, cmd, args...), "\n")
+		runargs = append(runargs, host)
+		fmt.Println(remoteaddr, cmd, runargs)
+		res = fmt.Sprint(res, runner(remoteaddr, cmd, runargs...), "\n")
 	}
 	return res
 }
