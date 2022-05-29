@@ -106,6 +106,8 @@ func validatehosts(hosts []string) ([]string, []string) {
 			}
 		} else if _, err := net.LookupIP(host); err == nil {
 			validhosts = append(validhosts, host)
+		} else {
+			continue
 		}
 
 		var port string
@@ -156,7 +158,6 @@ func prerunner(req *http.Request, cmd string, cmdopts map[string]string, default
 			runargs = append(runargs, "-p"+ports[i])
 		}
 		runargs = append(runargs, host)
-		fmt.Println(remoteaddr, cmd, runargs)
 		res = fmt.Sprint(res, runner(remoteaddr, cmd, runargs...), "\n")
 	}
 	return res
