@@ -175,7 +175,7 @@ func ping(w http.ResponseWriter, req *http.Request) {
 	if strings.TrimSpace(res) == "" {
 		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
-		fmt.Fprint(w, strings.TrimSpace(res), "\n")
+		_, _ = fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
 }
 
@@ -191,7 +191,7 @@ func mtr(w http.ResponseWriter, req *http.Request) {
 	if strings.TrimSpace(res) == "" {
 		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
-		fmt.Fprint(w, strings.TrimSpace(res), "\n")
+		_, _ = fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
 }
 
@@ -207,7 +207,7 @@ func traceroute(w http.ResponseWriter, req *http.Request) {
 	if strings.TrimSpace(res) == "" {
 		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
-		fmt.Fprint(w, strings.TrimSpace(res), "\n")
+		_, _ = fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
 }
 
@@ -223,7 +223,7 @@ func nping(w http.ResponseWriter, req *http.Request) {
 	if strings.TrimSpace(res) == "" {
 		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
-		fmt.Fprint(w, strings.TrimSpace(res), "\n")
+		_, _ = fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
 }
 
@@ -235,5 +235,5 @@ func main() {
 	http.HandleFunc("/nping/", nping)
 	logstdout.Info("Serving on :", listenport)
 	logfile.Info("Serving on :", listenport)
-	http.ListenAndServe(fmt.Sprint(":", listenport), nil)
+	_ = http.ListenAndServe(fmt.Sprint(":", listenport), nil)
 }
