@@ -172,7 +172,7 @@ func ping(w http.ResponseWriter, req *http.Request) {
 	defaultopts = append(defaultopts, "-c10")
 	res := prerunner(req, cmd, cmdopts, defaultopts)
 	if strings.TrimSpace(res) == "" {
-		fmt.Fprintln(w, http.StatusInternalServerError)
+		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
 		fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
@@ -188,7 +188,7 @@ func mtr(w http.ResponseWriter, req *http.Request) {
 	defaultopts = append(defaultopts, "-r", "-w", "-c10")
 	res := prerunner(req, cmd, cmdopts, defaultopts)
 	if strings.TrimSpace(res) == "" {
-		fmt.Fprintln(w, http.StatusInternalServerError)
+		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
 		fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
@@ -204,7 +204,7 @@ func traceroute(w http.ResponseWriter, req *http.Request) {
 	//defaultopts = append(defaultopts) // no default options for traceroute
 	res := prerunner(req, cmd, cmdopts, defaultopts)
 	if strings.TrimSpace(res) == "" {
-		fmt.Fprintln(w, http.StatusInternalServerError)
+		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
 		fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
@@ -220,7 +220,7 @@ func nping(w http.ResponseWriter, req *http.Request) {
 	defaultopts = append(defaultopts, "-c3")
 	res := prerunner(req, cmd, cmdopts, defaultopts)
 	if strings.TrimSpace(res) == "" {
-		fmt.Fprintln(w, http.StatusInternalServerError)
+		http.Error(w, "500: Internal Server Error", http.StatusInternalServerError)
 	} else {
 		fmt.Fprint(w, strings.TrimSpace(res), "\n")
 	}
