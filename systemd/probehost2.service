@@ -8,6 +8,8 @@ StartLimitBurst=5
 StartLimitIntervalSec=20
 
 [Service]
+User=1000
+Group=1000
 Restart=always
 RestartSec=1
 ExecStart=/bin/probehost2 --logfilepath "/var/log/probehost2.log" --port 8000
