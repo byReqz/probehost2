@@ -1,0 +1,7 @@
+name: ci
+
+on: [push]
+
+jobs:
+  test:
+    uses: byReqz/workflows/.github/workflows/golint_with_codeql.yml@main
