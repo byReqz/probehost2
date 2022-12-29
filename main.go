@@ -27,7 +27,7 @@ func init() {
 	logstdout.SetLevel(log.InfoLevel)
 	var logfilepath string
 
-	if _, exists := os.LookupEnv("PROBEHOST_LOGPATH"); exists == true {
+	if _, exists := os.LookupEnv("PROBEHOST_LOGPATH"); exists {
 		logfilepath, _ = os.LookupEnv("PROBEHOST_LOGPATH")
 	} else {
 		logfilepath = "probehost2.log"
@@ -37,7 +37,7 @@ func init() {
 	} else {
 		allowprivate = false
 	}
-	if envvalue, exists := os.LookupEnv("PROBEHOST_LISTEN_PORT"); exists == true {
+	if envvalue, exists := os.LookupEnv("PROBEHOST_LISTEN_PORT"); exists {
 		var err error
 		listenport, err = strconv.Atoi(envvalue)
 		if err != nil {
@@ -147,7 +147,7 @@ func prerunner(req *http.Request, cmd string, cmdopts map[string]string, default
 	var res string
 	var args []string
 	var remoteaddr string
-	if req.Header.Get("X-Forwarded-For") != "" && disablexforwardedfor != true {
+	if req.Header.Get("X-Forwarded-For") != "" && !disablexforwardedfor {
 		remoteaddr = req.Header.Get("X-Forwarded-For")
 	} else {
 		remoteaddr = req.RemoteAddr
