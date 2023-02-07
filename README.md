@@ -77,6 +77,7 @@ https://[address]/[command]/[host](_[port]),[host].../[options]
   - ping
   - mtr
   - traceroute
+  - nping
 - [host] = can be one or more hosts query, seperated by a comma
 - [port] = port to be queried, optional
 - [options] = options to run the command with, seperated by a comma
