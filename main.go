@@ -16,9 +16,9 @@ import (
 var logStdout = log.New()
 var logFile = log.New()
 
-var listenPort = 8080 // port to listen on
+var listenPort = 8080         // port to listen on
 var disableXForwardedFor bool // whether to disable parsing the X-Forwarded-For header or not
-var allowPrivate bool // whether to allow private IP ranges or not
+var allowPrivate bool         // whether to allow private IP ranges or not
 
 func init() {
 	logStdout.SetFormatter(&log.TextFormatter{
@@ -84,7 +84,7 @@ func runner(remoteip string, command string, args ...string) string {
 	return string(cmd)
 }
 
-// validatehosts checks the given host+port combinations for validity and returns valid hosts + valid ports seperately.
+// validatehosts checks the given host+port combinations for validity and returns valid hosts + valid ports separately.
 func validatehosts(hosts []string) ([]string, []string) {
 	var validHosts []string
 	var validPorts []string
