@@ -58,8 +58,9 @@ The app currently has 4 runtime flags:
 - `-o / --logfilepath` -- sets the log output file
 - `-x / --disable-x-forwarded-for` -- disables checking for the X-Forwarded-For header
 - `-l / --allow-private` -- allows lookups of private IP ranges
+- `--request-ttl` -- sets the maximum request time to live in seconds
 
-All the Flags also have an accompanying environment value: `PROBEHOST_LOGPATH`, `PROBEHOST_ALLOW_PRIVATE`, `PROBEHOST_LISTEN_PORT` and `PROBEHOST_DISABLE_X_FORWARDED_FOR` but the options given via commandline have priority.
+All the Flags also have an accompanying environment value: `PROBEHOST_LOGPATH`, `PROBEHOST_ALLOW_PRIVATE`, `PROBEHOST_LISTEN_PORT`, `PROBEHOST_DISABLE_X_FORWARDED_FOR` and `PROBEHOST_REQUEST_TTL` but the options given via commandline have priority.
 
 The app will log every request including the IP that's querying and show failed requests on stdout.
 

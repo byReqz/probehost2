@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
@@ -19,6 +20,7 @@ var logFile = log.New()
 var listenPort = 8080         // port to listen on
 var disableXForwardedFor bool // whether to disable parsing the X-Forwarded-For header or not
 var allowPrivate bool         // whether to allow private IP ranges or not
+var requestTTL = 180          // maximum request time to live in seconds
 
 func init() {
 	logStdout.SetFormatter(&log.TextFormatter{
@@ -42,10 +44,19 @@ func init() {
 		}
 	}
 
+	if val, exists := os.LookupEnv("PROBEHOST_REQUEST_TTL"); exists {
+		var err error
+		requestTTL, err = strconv.Atoi(val)
+		if err != nil {
+			logStdout.Fatal("Failed to read PROBEHOST_REQUEST_TTL: ", err.Error())
+		}
+	}
+
 	flag.StringVarP(&logFilePath, "logFilePath", "o", logFilePath, "sets the output file for the log")
 	flag.IntVarP(&listenPort, "port", "p", listenPort, "sets the port to listen on")
 	flag.BoolVarP(&disableXForwardedFor, "disable-x-forwarded-for", "x", disableXForwardedFor, "whether to show x-forwarded-for or the requesting IP")
 	flag.BoolVarP(&allowPrivate, "allow-private", "l", allowPrivate, "whether to show lookups of private IP ranges")
+	flag.IntVar(&requestTTL, "request-ttl", requestTTL, "sets the maximum request time to live in seconds")
 	flag.Parse()
 
 	logpath, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0660)
@@ -230,7 +241,13 @@ func main() {
 	http.HandleFunc("/tracert/", traceroute)
 	http.HandleFunc("/traceroute/", traceroute)
 	http.HandleFunc("/nping/", nping)
+
+	server := &http.Server{
+		Addr:              fmt.Sprint(":", listenPort),
+		ReadHeaderTimeout: time.Duration(requestTTL) * time.Second,
+	}
+
 	logStdout.Info("Serving on :", listenPort)
 	logFile.Info("Serving on :", listenPort)
-	_ = http.ListenAndServe(fmt.Sprint(":", listenPort), nil)
+	_ = server.ListenAndServe()
 }

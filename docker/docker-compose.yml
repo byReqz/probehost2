@@ -10,6 +10,7 @@ services:
      - PROBEHOST_ALLOW_PRIVATE=false
      - PROBEHOST_DISABLE_X_FORWARDED_FOR=false
      - PROBEHOST_LISTEN_PORT=8000
+     - PROBEHOST_REQUEST_TTL=180
     ports:
      - 1234:8000
     volumes:
